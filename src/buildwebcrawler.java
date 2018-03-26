@@ -16,8 +16,8 @@ class webcrawler {
    }
 
    public void getPageLinks(String URL) {
-       
-	   if (!URL.isEmpty()) {
+       System.out.println(URL +" url to craw");
+	   if (!links.contains(URL)) {
 	   try {
 	   //Get HTML source document for url using jsoup     
        Document document = Jsoup.connect(URL).get();
@@ -29,6 +29,7 @@ class webcrawler {
        for (Element page : linksOnPage) {
     	   
            getPageLinks(page.attr("abs:href"));
+           
            System.out.println(page.attr("abs:href"));
        }
 	   } catch (IOException e) {
