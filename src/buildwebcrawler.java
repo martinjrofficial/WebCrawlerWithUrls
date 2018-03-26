@@ -9,7 +9,7 @@ import java.util.HashSet;
 class webcrawler {
 	//Hashet to Link Urls 
 	private HashSet<String> links = new HashSet<>();
-
+	private String url;
 
    public webcrawler() {
      links = new HashSet<String>();
@@ -17,6 +17,7 @@ class webcrawler {
 
    public void getPageLinks(String URL) {
        System.out.println(URL +" url to craw");
+       setUrl(URL);
 	   if (!links.contains(URL)) {
 	   try {
 	   //Get HTML source document for url using jsoup     
@@ -37,6 +38,9 @@ class webcrawler {
        }
        }
     }
+   public void setUrl(String url) {
+	    this.url=url;
+   }
 }  
 public class buildwebcrawler {
 	public static void main(String[] args) {
