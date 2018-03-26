@@ -9,90 +9,108 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 
-class webcrawler {
+class webCrawler {
     
     private String url;
     private HashSet<String> links;
     private List<String> tofile =  new ArrayList<String>();
+    private static final String FNAME = "testing.txt";
    
    
-    public webcrawler() {
+    public webCrawler() {
         links = new HashSet<>();
         }
-    public void geturls(String URL) {
-        ArrayList<String> childurls=  new ArrayList<String>();
-       try {
-              links.add(URL);
-              tofile.add("New to crawl");
-           tofile.add(URL);
-           tofile.add("");
-           tofile.add("All URLS in ["+ URL + "] are ");
-           tofile.add("");
-           
-    Document document = Jsoup.connect(URL).get();
-    Elements linksOnPage = document.select("a[href]");
-    for (Element page : linksOnPage) {
-       
-       tofile.add(page.attr("abs:href"));
-       
-       System.out.println(page.attr("abs:href"));
-       childurls.add(page.attr("abs:href"));
-       
-               
+    
+
+	public void getUrls(String url) {
+		//Create an array list to store childurl for each node urls
+		ArrayList<String> childUrls = new ArrayList<String>();
+		try {
+			links.add(url);
+			tofile.add("");
+			tofile.add("New url to crawl is" + url);
+			tofile.add("");
+			tofile.add("All URLS in [" + url + "] are ");
+			tofile.add("");
+            //Use Jsoup to collect HTML source documents of Url
+			Document document = Jsoup.connect(url).get();
+			//To get all elements of href url with tag <a>
+		    Elements linksOnPage = document.select("a[href]");
+		    //To get all elements of urf, static links and otherwise
+		    Elements alllink = document.select("[href]"); // a without href
+		    //To get urls of images
+		    Elements img = document.select("img[src]");
+			
+		   //Get urls that has child nodes and base to arraylist of urls with child nodes 
+		   for (Element page : linksOnPage) {
+				childUrls.add(page.attr("abs:href"));
+			}
+           //Get urls of all links and add to sitemap
+			for (Element page : alllink) {
+				tofile.add(page.attr("abs:href"));
+			}
+			//Get image urls and add to urls in sitemap
+			for (Element page : img) {
+				tofile.add(page.attr("abs:src"));
+			}
+			getLinks(childUrls);
+
+		} catch (IOException e) {
+			System.err.println("For '" + url + "': " + e.getMessage());
+		  }
+	}
+    
+
+	public void getPageLinks(String url) {
+        setUrl(url);
+		tofile.add("First Page " + url);
+		//Get child url nodes of first url
+		getUrls(url);
+
+	}
+    
+
+
+	public void getLinks(ArrayList<String> childLinks) {
+		//check if url has been crawled and if it is not an outgoing link from the site
+		//if not, crawl the url
+		if (!childLinks.isEmpty()) {
+			for (String urls : childLinks) {
+				if (!links.contains(urls) && urls.contains(url))
+					getUrls(urls);
+				else
+					System.out.print("");
+			}
+			
+		}
+	}
+
+    
+    public void setUrl(String url) {
+	    this.url=url;
     }
-    getLinks(childurls);
+
     
-} catch (IOException e) {
-    System.err.println("For '" + URL + "': " + e.getMessage());
+    public void printArray() {	
+    	//Write to file to generate site map
+	    try (BufferedWriter bw = new BufferedWriter(new FileWriter(FNAME))) {
+		    for (String line : tofile) {
+			    bw.write(line + "\n");
+		    }
+
+		    bw.close();
+
+	    } catch (IOException e) {
+		    e.printStackTrace();
+	      }
+    } 
 }
-    }
-    public void getPageLinks(String URL) {
-       seturl(URL);
-       
-       tofile.add("First Page "+URL);
-       // System.out.println();
-       geturls(URL);
-       
-    }
-    
-    
-    public void getLinks(ArrayList<String> page) {
-       System.out.println("urls");
-          for (String urls: page) {
-        
-       if(!links.contains(urls) && urls.contains(url))
-              geturls(urls);
-          else 
-                     System.out.println();
-          }
-       
-    
-    }
-public void seturl(String URL) {
-       url=URL;
-}
-public void printarray() {
-   
-           final String FNAME = "testing.txt";
-              try ( BufferedWriter bw = 
-                           new BufferedWriter (new FileWriter (FNAME)) ) 
-              {                    
-                     for (String line : tofile) {
-                           bw.write (line + "\n");
-                     }
-                     
-                     bw.close ();
-                     
-              } catch (IOException e) {
-                     e.printStackTrace ();
-              }
-       }
-}
-class buildwebcrawler{
-public static void main(String[] args) {
-       webcrawler cd = new webcrawler();
-    cd.getPageLinks("https://wiprodigital.com/");
-    cd.printarray();
-    
-}
+
+class buildwebcrawler {
+	public static void main(String[] args) {
+		webCrawler cd = new webCrawler();
+		cd.getPageLinks("https://wiprodigital.com/");//Site to crawl
+		cd.printArray();
+
+	}
 }
