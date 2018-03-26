@@ -25,8 +25,9 @@ class webcrawler {
        Elements linksOnPage = document.select("a[href]");
 
        //Print the urls
+       links.add(URL);
        for (Element page : linksOnPage) {
-    	   links.add(page);
+    	   
            getPageLinks(page.attr("abs:href"));
            System.out.println(page.attr("abs:href"));
        }
