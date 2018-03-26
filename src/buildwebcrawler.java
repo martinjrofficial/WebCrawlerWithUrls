@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.util.HashSet;
 
 
-public class buildwebcrawler {
+class webcrawler {
 	//Hashet to Link Urls 
 	private HashSet<String> links = new HashSet<>();
 
 
-   public buildwebcrawler() {
+   public webcrawler() {
      links = new HashSet<String>();
    }
 
@@ -26,7 +26,9 @@ public class buildwebcrawler {
 
        //Print the urls
        for (Element page : linksOnPage) {
+    	   links.add(page);
            getPageLinks(page.attr("abs:href"));
+           System.out.println(page.attr("abs:href"));
        }
 	   } catch (IOException e) {
            System.err.println("For '" + URL + "': " + e.getMessage());
@@ -34,5 +36,12 @@ public class buildwebcrawler {
        }
     }
 }  
+public class buildwebcrawler {
+	public static void main(String[] args) {
+		webcrawler wc = new webcrawler();
+		wc.getPageLinks("https://wiprodigital.com/");
+	
 
+	}
+}
    
