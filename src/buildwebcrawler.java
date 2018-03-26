@@ -20,11 +20,11 @@ class webcrawler {
         links = new HashSet<>();
         }
     public void geturls(String URL) {
-       
+        ArrayList<String> childurls=  new ArrayList<String>();
        try {
-           links.add(URL);
-           tofile.add("");
-           tofile.add("Url to Crawl :"+URL);
+              links.add(URL);
+              tofile.add("New to crawl");
+           tofile.add(URL);
            tofile.add("");
            tofile.add("All URLS in ["+ URL + "] are ");
            tofile.add("");
@@ -36,10 +36,11 @@ class webcrawler {
        tofile.add(page.attr("abs:href"));
        
        System.out.println(page.attr("abs:href"));
-       getLinks(page.attr("abs:href"));    
+       childurls.add(page.attr("abs:href"));
+       
                
     }
-   
+    getLinks(childurls);
     
 } catch (IOException e) {
     System.err.println("For '" + URL + "': " + e.getMessage());
@@ -55,14 +56,15 @@ class webcrawler {
     }
     
     
-    public void getLinks(String page) {
+    public void getLinks(ArrayList<String> page) {
        System.out.println("urls");
-    
+          for (String urls: page) {
         
-       
-              geturls(page);
-   
-          
+       if(!links.contains(urls) && urls.contains(url))
+              geturls(urls);
+          else 
+                     System.out.println();
+          }
        
     
     }
@@ -70,7 +72,7 @@ public void seturl(String URL) {
        url=URL;
 }
 public void printarray() {
-
+   
            final String FNAME = "testing.txt";
               try ( BufferedWriter bw = 
                            new BufferedWriter (new FileWriter (FNAME)) ) 
